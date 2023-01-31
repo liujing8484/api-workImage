@@ -65,3 +65,37 @@ class Other(Base):
     otherName = Column(String(50), comment='名称')
     otherNum = Column(Float, nullable=False, comment='数值')
     remark = Column(String(50), comment='备注')
+
+
+class power_bet(Base):
+    __tablename__ = "power_bet"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    bet_id = Column(Integer, ForeignKey("bets.id"))
+    h = Column(Float, nullable=False, comment='高差')
+    angle = Column(Float, nullable=False, comment='高差角')
+
+    bet = relationship("Bet")
+
+
+class power_across(Base):
+    __tablename__ = "power_across"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    across_id = Column(Integer, ForeignKey("across.id"))
+    hi = Column(Float, nullable=False, comment='水平张力')
+    fi = Column(Float, nullable=False, comment='弧垂')
+    fb = Column(Float, nullable=False, comment='平视弧垂')
+    ti = Column(Float, nullable=False, comment='出口张力')
+
+    across = relationship("Across", back_populates="across")
+
+
+class power_tower(Base):
+    __tablename__ = "power_tower"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    tower_id = Column(Integer, ForeignKey("towers.id"))
+    si = Column(Float, nullable=False, comment='牵引力')
+
+    tower = relationship("Tower")
