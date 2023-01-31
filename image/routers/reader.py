@@ -8,7 +8,7 @@ from image import crud
 from image import schemas
 from ..database import SessionLocal, engine, Base
 
-app_orm = APIRouter()
+app = APIRouter()
 
 Base.metadata.create_all(bind=engine)  # 数据库初始化，如果没有库或者表，会自动创建
 
@@ -23,7 +23,7 @@ def get_db():
 
 
 # 通过excel导入铁塔、塔间、控制点、引绳及导线、其他
-@app_orm.post("/excel_file/")
+@app.post("/excel_file/")
 def create_models_from_excel(file: bytes = File(...), db: Session = Depends(get_db)):
     # 删除数据库
     db.query(Other).delete()
@@ -92,30 +92,30 @@ def create_models_from_excel(file: bytes = File(...), db: Session = Depends(get_
 
 
 # 获取铁塔集合
-@app_orm.get("/get_towers/", response_model=List[schemas.Tower])
+@app.get("/get_towers/", response_model=List[schemas.Tower])
 def get_towers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_towers(db=db, skip=skip, limit=limit)
 
 
 # 获取塔间集合
-@app_orm.get("/get_bets/", response_model=List[schemas.Bet])
+@app.get("/get_bets/", response_model=List[schemas.Bet])
 def get_bets(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_bets(db=db, skip=skip, limit=limit)
 
 
 # 获取控制点集合
-@app_orm.get("/get_across/", response_model=List[schemas.Across])
+@app.get("/get_across/", response_model=List[schemas.Across])
 def get_across(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_across(db=db, skip=skip, limit=limit)
 
 
 # 获取引绳和导线集合
-@app_orm.get("/get_wires/", response_model=List[schemas.Wire])
+@app.get("/get_wires/", response_model=List[schemas.Wire])
 def get_wires(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_wires(db=db, skip=skip, limit=limit)
 
 
 # 获取其他参数集合
-@app_orm.get("/get_others/", response_model=List[schemas.Other])
+@app.get("/get_others/", response_model=List[schemas.Other])
 def get_others(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_others(db=db, skip=skip, limit=limit)

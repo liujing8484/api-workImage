@@ -1,6 +1,7 @@
 import os
 from fastapi import FastAPI
-from image.routers import app_orm
+from image.routers import reader
+from image.routers import power
 import uvicorn
 
 from fastapi.openapi.docs import (
@@ -43,7 +44,8 @@ async def redoc_html():
     )
 
 
-app.include_router(app_orm, prefix="/reader", tags=['读取xlsx文件到数据库'])
+app.include_router(reader.app, prefix="/reader", tags=['读取xlsx文件到数据库'])
+app.include_router(power.app, prefix="/power", tags=['计算受力并保存到数据库'])
 
 if __name__ == '__main__':
     uvicorn.run(app, host="127.0.0.1", port=8000, reload=False)

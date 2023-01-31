@@ -29,6 +29,7 @@ class CreateBet(BetBase):
 
 class Bet(BetBase):
     id: int
+
     # first_tower: Tower
 
     class Config:
@@ -88,6 +89,19 @@ class CreateOther(OtherBase):
 
 class Other(OtherBase):
     id: int
+
+    class Config:
+        orm_mode = True
+
+
+class PowerBetBase(BaseModel):
+    h: float
+    angle: float
+
+
+class PowerBet(PowerBetBase):
+    id: int
+    bet: Bet
 
     class Config:
         orm_mode = True

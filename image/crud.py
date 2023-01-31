@@ -87,3 +87,12 @@ def db_create_other(db: Session, other: schemas.CreateOther):
     db.commit()  # 提交保存到数据库中
     db.refresh(db_data)  # 刷新
     return db_data
+
+
+# 新建塔间的受力
+def db_create_powerBet(db: Session, powerBet: schemas.PowerBetBase, bet_id: int):
+    db_data = models.PowerBet(**powerBet.dict(), bet_id=bet_id)
+    db.add(db_data)
+    db.commit()  # 提交保存到数据库中
+    db.refresh(db_data)  # 刷新
+    return db_data
