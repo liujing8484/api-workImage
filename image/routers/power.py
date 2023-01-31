@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from typing import List
 from sqlalchemy.orm import Session
 from image import models, crud, schemas
 from ..database import SessionLocal
@@ -31,4 +32,12 @@ def calculate(db: Session = Depends(get_db)):
             "angle": angle
         }
         crud.db_create_powerBet(db, powerBet=schemas.PowerBetBase(**power_bet), bet_id=bet.id)
+    # power_across
+
     return {"message": "受力计算成功"}
+
+
+# 获取塔间集合
+@app.get("/get_power_bets/", response_model=List[schemas.PowerBet])
+def get_power_bets(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_power_bets(db=db, skip=skip, limit=limit)

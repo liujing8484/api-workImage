@@ -34,6 +34,11 @@ def get_others(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Other).offset(skip).limit(limit).all()
 
 
+# 获取所有的塔间受力集合
+def get_power_bets(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.PowerBet).offset(skip).limit(limit).all()
+
+
 # 通过名称查询铁塔
 def get_tower_by_name(db: Session, name: str):
     return db.query(models.Tower).filter(models.Tower.tName == name).first()
