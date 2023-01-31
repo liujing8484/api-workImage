@@ -105,3 +105,18 @@ class PowerBet(PowerBetBase):
 
     class Config:
         orm_mode = True
+
+
+class PowerAcrossBase(BaseModel):
+    hi: float
+    fi: float
+    fb: float
+    ti: float
+
+
+class PowerAcross(PowerAcrossBase):
+    id: int
+    across: Across
+
+    class Config:
+        orm_mode = True
