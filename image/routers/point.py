@@ -24,18 +24,19 @@ def calculate_point(db: Session = Depends(get_db)):
     bets = db.query(models.Bet).all()
 
     # 计算tower的坐标
+    db.query(models.PointTower).delete()
     lei = 0
     for tower, bet in zip(towers, bets):
         point_tower = {
-            "x": tower.altitude,
-            "y": lei
+            "x": lei,
+            "y": tower.altitude
         }
         lei += bet.btSpan
         crud.db_create_point_tower(db, point_tower=schemas.PointTowerBase(**point_tower), tower_id=tower.id)
     else:
         point_tower = {
-            "x": towers[-1].altitude,
-            "y": lei
+            "x": lei,
+            "y": towers[-1].altitude
         }
         crud.db_create_point_tower(db, point_tower=schemas.PointTowerBase(**point_tower), tower_id=towers[-1].id)
 
