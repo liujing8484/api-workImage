@@ -1,3 +1,3 @@
 from .model import *
-from .param import *
+from .power import *
 from .point import *

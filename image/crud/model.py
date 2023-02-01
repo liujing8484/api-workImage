@@ -131,3 +131,12 @@ def db_create_powerTower(db: Session, powerTower: schemas.PowerTowerBase, tower_
     db.commit()  # 提交保存到数据库中
     db.refresh(db_data)  # 刷新
     return db_data
+
+
+# 新建铁塔的坐标
+def db_create_point_tower(db: Session, point_tower: schemas.PointTowerBase, tower_id: int):
+    db_data = models.PointTower(**point_tower.dict(), tower_id=tower_id)
+    db.add(db_data)
+    db.commit()  # 提交保存到数据库中
+    db.refresh(db_data)  # 刷新
+    return db_data

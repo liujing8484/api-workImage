@@ -39,7 +39,7 @@ def cal_si(index, param, ti_max, db):
 
 
 @app.post("/calculate/")
-def calculate(param: schemas.CalculatePowerParam, db: Session = Depends(get_db)):
+def calculate_power(param: schemas.CalculatePowerParam, db: Session = Depends(get_db)):
     # power_bet
     bets = db.query(models.Bet).all()
     towers = db.query(models.Tower).all()
