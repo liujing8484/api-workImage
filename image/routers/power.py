@@ -69,6 +69,8 @@ def calculate(w: float = 3.01, db: Session = Depends(get_db)):
             "ti": ti,
         }
         crud.db_create_powerAcross(db, schemas.PowerAcrossBase(**power_across), across_id=across.id)
+    # power_tower
+
     return {"message": "受力计算成功"}
 
 
