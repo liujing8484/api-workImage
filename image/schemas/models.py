@@ -120,3 +120,15 @@ class PowerAcross(PowerAcrossBase):
 
     class Config:
         orm_mode = True
+
+
+class PowerTowerBase(BaseModel):
+    si: float
+
+
+class PowerTower(PowerTowerBase):
+    id: int
+    tower: Tower
+
+    class Config:
+        orm_mode = True

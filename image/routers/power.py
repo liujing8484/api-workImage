@@ -26,10 +26,23 @@ def cal_ti(a, w, e, lst_h):
     return ti
 
 
-@app.get("/calculate/{w}")
-def calculate(w: float = 3.01, db: Session = Depends(get_db)):
+# 走板过第index塔位时受力si
+def cal_si(index, param, ti_max, db):
+    lst_h = [p.h for p in db.query(models.PowerBet).all()]
+    si = ti_max
+    for i, h in enumerate(lst_h):
+        if i < index:
+            si = getSi(si, param.w_d, h, param.num, param.e)
+        else:
+            si = getSi(si, param.w_p, h, 1, param.e)
+    return si
+
+
+@app.post("/calculate/")
+def calculate(param: schemas.CalculatePowerParam, db: Session = Depends(get_db)):
     # power_bet
     bets = db.query(models.Bet).all()
+    towers = db.query(models.Tower).all()
     db.query(models.PowerBet).delete()
     for bet in bets:
         tName1, tName2 = bet.btName.split("--")
@@ -45,8 +58,8 @@ def calculate(w: float = 3.01, db: Session = Depends(get_db)):
     # power_across
     lst_power_bet = db.query(models.PowerBet).all()
     lst_across = db.query(models.Across).all()
+    w = param.w_d  # 导引绳的自重
     for across in lst_across:
-        print("*" * 20, across.__dict__)
         x, y = across.acrossX, across.acrossY + across.controlHight
         bet = across.bet
         tName, _ = bet.btName.split("--")
@@ -69,8 +82,17 @@ def calculate(w: float = 3.01, db: Session = Depends(get_db)):
             "ti": ti,
         }
         crud.db_create_powerAcross(db, schemas.PowerAcrossBase(**power_across), across_id=across.id)
+    # 获取最大的ti
+    # lst_power_across =
+    ti_max = max(db.query(models.PowerAcross).all(), key=lambda p: p.ti).ti
     # power_tower
-
+    db.query(models.PowerTower).delete()  # 将power_tower的值全部删除
+    for index, tower in enumerate(towers):
+        si = cal_si(index, param, ti_max, db)
+        power_tower = {
+            "si": si
+        }
+        crud.db_create_powerTower(db, powerTower=schemas.PowerTowerBase(**power_tower), tower_id=tower.id)
     return {"message": "受力计算成功"}
 
 
@@ -84,3 +106,9 @@ def get_power_bets(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
 @app.get("/get_power_across/", response_model=List[schemas.PowerAcross])
 def get_power_across(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_power_across(db=db, skip=skip, limit=limit)
+
+
+# 获取控制点受力集合
+@app.get("/get_power_tower/", response_model=List[schemas.PowerTower])
+def get_power_tower(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_power_tower(db=db, skip=skip, limit=limit)

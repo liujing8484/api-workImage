@@ -26,6 +26,9 @@ def get_db():
 @app.post("/excel_file/")
 def create_models_from_excel(file: bytes = File(...), db: Session = Depends(get_db)):
     # 删除数据库
+    db.query(PowerTower).delete()
+    db.query(PowerAcross).delete()
+    db.query(PowerBet).delete()
     db.query(Other).delete()
     db.query(Wire).delete()
     db.query(Across).delete()
