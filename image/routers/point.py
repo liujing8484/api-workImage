@@ -18,6 +18,14 @@ def get_db():
         db.close()
 
 
+# 所有的点都会通过这个方法
+def getXY(x, y):
+    return {
+        "x": x / 2,
+        "y": y * 5
+    }
+
+
 @app.get("/calculate_point/")
 def calculate_point(db: Session = Depends(get_db)):
     towers = db.query(models.Tower).all()
@@ -27,17 +35,11 @@ def calculate_point(db: Session = Depends(get_db)):
     db.query(models.PointTower).delete()
     lei = 0
     for tower, bet in zip(towers, bets):
-        point_tower = {
-            "x": lei,
-            "y": tower.altitude
-        }
+        point_tower = getXY(lei, tower.altitude)
         lei += bet.btSpan
         crud.db_create_point_tower(db, point_tower=schemas.PointTowerBase(**point_tower), tower_id=tower.id)
     else:
-        point_tower = {
-            "x": lei,
-            "y": towers[-1].altitude
-        }
+        point_tower = getXY(lei, towers[-1].altitude)
         crud.db_create_point_tower(db, point_tower=schemas.PointTowerBase(**point_tower), tower_id=towers[-1].id)
 
     return {"message": "坐标计算成功"}
