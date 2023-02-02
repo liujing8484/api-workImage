@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter, Depends
 from typing import List
 from sqlalchemy.orm import Session
@@ -38,7 +40,7 @@ def cal_si(index, param, ti_max, db):
         else:
             si = getSi(si, param.w_p, h, 1, param.e)
             lst_si.append(si)
-    return si, lst_si
+    return si, json.dumps(lst_si)
 
 
 @app.post("/calculate/")
@@ -93,7 +95,7 @@ def calculate_power(param: schemas.CalculatePowerParam, db: Session = Depends(ge
         si, lst_si = cal_si(index, param, ti_max, db)
         power_tower = {
             "si": si,
-            "lst_si": lst_si
+            "sis": lst_si
         }
         crud.db_create_powerTower(db, powerTower=schemas.PowerTowerBase(**power_tower), tower_id=tower.id)
     return {"message": "受力计算成功"}

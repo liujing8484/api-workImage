@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Float, ForeignKey
+from sqlalchemy import Column, Integer, Float, ForeignKey, String
 from sqlalchemy.dialects.postgresql import ARRAY
 from ..database import Base
 from sqlalchemy.orm import relationship
@@ -34,6 +34,6 @@ class PowerTower(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     tower_id = Column(Integer, ForeignKey("towers.id"))
     si = Column(Float, nullable=False, comment='牵引力')  # 走板通过此基塔滑车，牵引机的牵引力
-    sis = Column(ARRAY(Float))  # 走板通过此个滑车，每基塔的轴向张力集合
+    sis = Column(String(256))  # 走板通过此个滑车，每基塔的轴向张力集合
 
     tower = relationship("Tower")

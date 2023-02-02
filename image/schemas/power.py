@@ -32,7 +32,7 @@ class PowerAcross(PowerAcrossBase):
 
 class PowerTowerBase(BaseModel):
     si: float
-    lst_si: List[float]
+    sis: str
 
 
 class PowerTower(PowerTowerBase):
