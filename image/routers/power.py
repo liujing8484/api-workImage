@@ -30,12 +30,15 @@ def cal_ti(a, w, e, lst_h):
 def cal_si(index, param, ti_max, db):
     lst_h = [p.h for p in db.query(models.PowerBet).all()]
     si = ti_max
+    lst_si = []
     for i, h in enumerate(lst_h):
         if i < index:
             si = getSi(si, param.w_d, h, param.num, param.e)
+            lst_si.append(si)
         else:
             si = getSi(si, param.w_p, h, 1, param.e)
-    return si
+            lst_si.append(si)
+    return si, lst_si
 
 
 @app.post("/calculate/")
@@ -83,14 +86,14 @@ def calculate_power(param: schemas.CalculatePowerParam, db: Session = Depends(ge
         }
         crud.db_create_powerAcross(db, schemas.PowerAcrossBase(**power_across), across_id=across.id)
     # 获取最大的ti
-    # lst_power_across =
     ti_max = max(db.query(models.PowerAcross).all(), key=lambda p: p.ti).ti
     # power_tower
     db.query(models.PowerTower).delete()  # 将power_tower的值全部删除
     for index, tower in enumerate(towers):
-        si = cal_si(index, param, ti_max, db)
+        si, lst_si = cal_si(index, param, ti_max, db)
         power_tower = {
-            "si": si
+            "si": si,
+            "lst_si": lst_si
         }
         crud.db_create_powerTower(db, powerTower=schemas.PowerTowerBase(**power_tower), tower_id=tower.id)
     return {"message": "受力计算成功"}

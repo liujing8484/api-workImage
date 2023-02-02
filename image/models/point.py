@@ -25,13 +25,13 @@ class PointAcross(Base):
 
     across = relationship("Across")
 
-
-class PointCurve(Base):
-    __tablename__ = "point_curve"
-
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    bet_id = Column(Integer, ForeignKey("across.id"))
-    xs = Column(ARRAY(Float), comment='xs')  # x左边的集合
-    ys = Column(ARRAY(Float), comment='ys')  # y坐标的集合
-
-    bet = relationship("Bet")
+#
+# class PointCurve(Base):
+#     __tablename__ = "point_curve"
+#
+#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+#     bet_id = Column(Integer, ForeignKey("across.id"))
+#     xs = Column(ARRAY(Float))  # x左边的集合
+#     ys = Column(ARRAY(Float))  # y坐标的集合
+#
+#     bet = relationship("Bet")
