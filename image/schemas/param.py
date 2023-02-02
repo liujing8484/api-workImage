@@ -9,8 +9,8 @@ class CalculatePowerParam(BaseModel):
 
 
 class CalculateCurveParam(BaseModel):
-    direction: bool  # true:向大号侧；false:向小号侧
-    isBigSite: bool  # 大牵张，小牵张
+    direction: bool = True  # true:向大号侧；false:向小号侧
+    Site: int = 0  # 1:大牵张;0:小牵张
     w_p: float = 0.8  # 牵引绳自重
     w_d: float = 3.01  # 导引绳自重
     num: int = 1  # 展放数量

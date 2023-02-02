@@ -56,6 +56,27 @@ def calculate_point(db: Session = Depends(get_db)):
     return {"message": "坐标计算成功"}
 
 
+@app.post("/calculate_point_curve")
+def calculate_point_curve(param: schemas.CalculateCurveParam, db: Session = Depends(get_db)):
+    bets = db.query(models.Bet).all()
+
+    for bet in bets:
+        tName, _ = bet.btName.split("--")
+        tower = crud.get_tower_by_name(db, name=tName)
+        power_bet = crud.get_power_bet(db, name=bet.btName)
+        h, angle = power_bet.h, power_bet.angle
+        bt_span = bet.btSpan
+        lei_span = power_bet.leiSpan
+        altitude = tower.altitude
+
+        # hi = getHiFromTa(si0, w, h, bt_span, angle)  # 先计算水平力
+        #
+        # points = []
+        # for index in range(50):
+        #     x = bt_span / 49 * index
+        #     point_x, point_y = getCurveXY(param.w_d, x, bt_span, lei_span, altitude, hi, angle)
+
+
 # 获取铁塔点坐标集合
 @app.get("/get_point_towers/", response_model=List[schemas.PointTower])
 def get_point_towers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):

@@ -35,7 +35,7 @@ def getSi(si, w, h, m, e):
 
 def getHiFromTa(si0, w, h, bt_span, angle):
     """通过si计算Hi"""
-    a = 1 + h / 2 / bt_span
+    a = 1 + h ** 2 / 2 / bt_span ** 2
     b = w ** 2 / 8 / math.cos(angle) ** 2 - w * h / 2 / math.cos(angle)
     return (si0 + math.sqrt(si0 ** 2 - 4 * si0 * b)) / 2 / a
 
