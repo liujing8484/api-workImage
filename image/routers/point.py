@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends
-from fastapi import APIRouter, Depends
 from typing import List
 from sqlalchemy.orm import Session
 from image import models, crud, schemas
@@ -30,6 +29,7 @@ def getXY(x, y):
 def calculate_point(db: Session = Depends(get_db)):
     towers = db.query(models.Tower).all()
     bets = db.query(models.Bet).all()
+    lst_across = db.query(models.Across).all()
 
     # 计算tower的坐标
     db.query(models.PointTower).delete()
@@ -42,10 +42,27 @@ def calculate_point(db: Session = Depends(get_db)):
         point_tower = getXY(lei, towers[-1].altitude)
         crud.db_create_point_tower(db, point_tower=schemas.PointTowerBase(**point_tower), tower_id=towers[-1].id)
 
+    # 计算across的坐标
+    for across in lst_across:
+        bet = across.bet
+        bets_new = filter(lambda b: b.id < bet.id, bets)
+        x = sum(map(lambda b: b.btSpan, bets_new)) + across.acrossX
+        y = across.acrossY
+        point_across = getXY(x, y)
+        crud.db_create_point_across(db, schemas.PointAcrossBase(**point_across), across_id=across.id)
+
+    # 计算curve的坐标
+
     return {"message": "坐标计算成功"}
 
 
-# 获取塔间受力集合
+# 获取铁塔点坐标集合
 @app.get("/get_point_towers/", response_model=List[schemas.PointTower])
 def get_point_towers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_point_tower(db=db, skip=skip, limit=limit)
+
+
+# 获取控制点坐标集合
+@app.get("/get_point_across/", response_model=List[schemas.PointAcross])
+def get_point_across(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_point_across(db=db, skip=skip, limit=limit)

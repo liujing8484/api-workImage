@@ -12,3 +12,14 @@ class PointTower(Base):
     y = Column(Float, nullable=False, comment='y')
 
     tower = relationship("Tower")
+
+
+class PointAcross(Base):
+    __tablename__ = "point_across"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    across_id = Column(Integer, ForeignKey("across.id"))
+    x = Column(Float, nullable=False, comment='x')
+    y = Column(Float, nullable=False, comment='y')
+
+    across = relationship("Across")
