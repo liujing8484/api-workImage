@@ -12,6 +12,7 @@ class PowerBet(Base):
     bet_id = Column(Integer, ForeignKey("bets.id"))
     h = Column(Float, nullable=False, comment='高差')
     angle = Column(Float, nullable=False, comment='高差角')
+    lei_span = Column(Float, nullable=False, comment='累加档距')
 
     bet = relationship("Bet", back_populates="powerbet")
 

@@ -5,6 +5,7 @@ from typing import List
 class PowerBetBase(BaseModel):
     h: float
     angle: float
+    lei_span: float
 
 
 class PowerBet(PowerBetBase):

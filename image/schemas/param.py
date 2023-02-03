@@ -15,3 +15,4 @@ class CalculateCurveParam(BaseModel):
     w_d: float = 3.01  # 导引绳自重
     num: int = 1  # 展放数量
     e: float = 1.015
+    index: int = 0  # 走板通过的塔位的index

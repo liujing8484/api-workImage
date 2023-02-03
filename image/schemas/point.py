@@ -1,4 +1,5 @@
 from .model import *
+from typing import List
 
 
 class PointTowerBase(BaseModel):
@@ -22,6 +23,20 @@ class PointAcrossBase(BaseModel):
 class PointAcross(PointAcrossBase):
     id: int
     across: Across
+
+    class Config:
+        orm_mode = True
+
+
+class PointCurveBase(BaseModel):
+    w: float
+    xs: str
+    ys: str
+
+
+class PointCurve(PointCurveBase):
+    id: int
+    bet: Bet
 
     class Config:
         orm_mode = True

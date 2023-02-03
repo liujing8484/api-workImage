@@ -47,7 +47,9 @@ def get_power_across(db: Session, skip: int = 0, limit: int = 10):
 
 
 # 获取所有的控制点受力集合
-def get_power_tower(db: Session, skip: int = 0, limit: int = 10):
+def get_power_tower(db: Session, name: str = None, skip: int = 0, limit: int = 10):
+    if name:
+        return db.query(models.PowerTower).filter(models.PowerTower.tower.has(tName=name)).first()
     return db.query(models.PowerTower).offset(skip).limit(limit).all()
 
 

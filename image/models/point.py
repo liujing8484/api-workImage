@@ -1,5 +1,4 @@
-from sqlalchemy import Column, Integer, Float, ForeignKey
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy import Column, Integer, Float, ForeignKey, String
 from ..database import Base
 from sqlalchemy.orm import relationship
 
@@ -25,13 +24,14 @@ class PointAcross(Base):
 
     across = relationship("Across")
 
-#
-# class PointCurve(Base):
-#     __tablename__ = "point_curve"
-#
-#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-#     bet_id = Column(Integer, ForeignKey("across.id"))
-#     xs = Column(ARRAY(Float))  # x左边的集合
-#     ys = Column(ARRAY(Float))  # y坐标的集合
-#
-#     bet = relationship("Bet")
+
+class PointCurve(Base):
+    __tablename__ = "point_curve"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    bet_id = Column(Integer, ForeignKey("bets.id"))
+    w = Column(Float, nullable=False, comment='引绳自重')
+    xs = Column(String(255))  # x坐标的集合
+    ys = Column(String(255))   # y坐标的集合
+
+    bet = relationship("Bet")

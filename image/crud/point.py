@@ -30,3 +30,12 @@ def db_create_point_across(db: Session, point_across: schemas.PointAcrossBase, a
     db.commit()  # 提交保存到数据库中
     db.refresh(db_data)  # 刷新
     return db_data
+
+
+# 新建曲线点的坐标
+def db_create_point_curve(db: Session, point_curve: schemas.PointCurveBase, bet_id: int):
+    db_data = models.PointCurve(**point_curve.dict(), bet_id=bet_id)
+    db.add(db_data)
+    db.commit()  # 提交保存到数据库中
+    db.refresh(db_data)  # 刷新
+    return db_data

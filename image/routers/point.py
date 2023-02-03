@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter, Depends
 from typing import List
 from sqlalchemy.orm import Session
@@ -59,22 +61,52 @@ def calculate_point(db: Session = Depends(get_db)):
 @app.post("/calculate_point_curve")
 def calculate_point_curve(param: schemas.CalculateCurveParam, db: Session = Depends(get_db)):
     bets = db.query(models.Bet).all()
+    lst_sis = [p.sis for p in db.query(models.PowerTower).all()]
+    # 假定走板通过id的塔位，那么可以求的每基塔位的牵引力
+    lst_s = json.loads(lst_sis[param.index])
+    # 那么就可以计算所有点坐标的集合
+    length = len(bets)
+    for index_bet, bet in enumerate(bets):
+        if index_bet <= param.index:
+            w = param.w_d
+            # lst_points.append(cal_points_bet_single(db, w, lst_s, index_bet))
+        else:
+            w = param.w_p
+            # lst_points.append(cal_points_bet_single(db, w, lst_s, index_bet))
+        xs, ys = cal_points_bet_single(db, w, lst_s, index_bet)
+        point_curve = {
+            "w": w,
+            "xs": json.dumps(xs),
+            "ys": json.dumps(ys),
+        }
+        crud.db_create_point_curve(db, schemas.PointCurveBase(**point_curve), bet_id=bet.id)
+    return {"message": "坐标计算成功"}
 
-    for bet in bets:
-        tName, _ = bet.btName.split("--")
-        tower = crud.get_tower_by_name(db, name=tName)
-        power_bet = crud.get_power_bet(db, name=bet.btName)
-        h, angle = power_bet.h, power_bet.angle
-        bt_span = bet.btSpan
-        lei_span = power_bet.leiSpan
-        altitude = tower.altitude
 
-        # hi = getHiFromTa(si0, w, h, bt_span, angle)  # 先计算水平力
-        #
-        # points = []
-        # for index in range(50):
-        #     x = bt_span / 49 * index
-        #     point_x, point_y = getCurveXY(param.w_d, x, bt_span, lei_span, altitude, hi, angle)
+# 计算单段曲线坐标点
+def cal_points_bet_single(db, w, powers, index):
+    bet = db.query(models.Bet).all()[index]
+    tName, _ = bet.btName.split("--")
+    tower = crud.get_tower_by_name(db, name=tName)
+    power_bet = crud.get_power_bet(db, name=bet.btName)
+    h, angle = power_bet.h, power_bet.angle
+    bt_span = bet.btSpan
+    lei_span = power_bet.lei_span
+    altitude = tower.altitude
+
+    si0 = powers[index]
+    hi = getHiFromTa(si0, w, h, bt_span, angle)  # 先计算水平力
+
+    lst_x = []
+    lst_y = []
+    for i in range(50):
+        x = bt_span / 49 * i
+        point_x, point_y = getCurveXY(w, x, bt_span, lei_span, altitude, hi, angle)
+        p_x, p_y = getXY(point_x, point_y)
+        lst_x.append(p_x)
+        lst_y.append(p_y)
+
+    return lst_x, lst_y
 
 
 # 获取铁塔点坐标集合

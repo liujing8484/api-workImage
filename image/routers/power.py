@@ -49,6 +49,7 @@ def calculate_power(param: schemas.CalculatePowerParam, db: Session = Depends(ge
     bets = db.query(models.Bet).all()
     towers = db.query(models.Tower).all()
     db.query(models.PowerBet).delete()
+    lei_span = 0
     for bet in bets:
         tName1, tName2 = bet.btName.split("--")
         tower1 = crud.get_tower_by_name(db, tName1)
@@ -57,9 +58,12 @@ def calculate_power(param: schemas.CalculatePowerParam, db: Session = Depends(ge
         angle = getAngle(h, bet.btSpan)
         power_bet = {
             "h": h,
-            "angle": angle
+            "angle": angle,
+            "lei_span": lei_span
         }
+        lei_span += bet.btSpan
         crud.db_create_powerBet(db, powerBet=schemas.PowerBetBase(**power_bet), bet_id=bet.id)
+
     # power_across
     lst_power_bet = db.query(models.PowerBet).all()
     lst_across = db.query(models.Across).all()
@@ -89,6 +93,7 @@ def calculate_power(param: schemas.CalculatePowerParam, db: Session = Depends(ge
         crud.db_create_powerAcross(db, schemas.PowerAcrossBase(**power_across), across_id=across.id)
     # 获取最大的ti
     ti_max = max(db.query(models.PowerAcross).all(), key=lambda p: p.ti).ti
+
     # power_tower
     db.query(models.PowerTower).delete()  # 将power_tower的值全部删除
     for index, tower in enumerate(towers):
