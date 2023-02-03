@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, Float, ForeignKey, String
-from sqlalchemy.dialects.postgresql import ARRAY
+# from sqlalchemy.dialects.postgresql import ARRAY
+# from sqlalchemy import ARRAY
 from ..database import Base
 from sqlalchemy.orm import relationship
 
