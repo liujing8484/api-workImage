@@ -91,6 +91,7 @@ def calculate_power(param: schemas.CalculatePowerParam, db: Session = Depends(ge
             "ti": ti,
         }
         crud.db_create_powerAcross(db, schemas.PowerAcrossBase(**power_across), across_id=across.id)
+
     # 获取最大的ti
     ti_max = max(db.query(models.PowerAcross).all(), key=lambda p: p.ti).ti
 
