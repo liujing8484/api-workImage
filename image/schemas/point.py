@@ -32,6 +32,7 @@ class PointCurveBase(BaseModel):
     w: float
     xs: str
     ys: str
+    index: int
 
 
 class PointCurve(PointCurveBase):

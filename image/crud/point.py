@@ -14,6 +14,11 @@ def get_point_across(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.PointAcross).offset(skip).limit(limit).all()
 
 
+# 获取所有的控制点坐标集合
+def get_point_curve(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.PointCurve).offset(skip).limit(limit).all()
+
+
 # 新建铁塔的坐标
 def db_create_point_tower(db: Session, point_tower: schemas.PointTowerBase, tower_id: int):
     db_data = models.PointTower(**point_tower.dict(), tower_id=tower_id)

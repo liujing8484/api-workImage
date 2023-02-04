@@ -22,8 +22,8 @@ def get_db():
 # 所有的点都会通过这个方法
 def getXY(x, y):
     return {
-        "x": x / 2,
-        "y": y * 5
+        "x": round(x / 2, 2),
+        "y": round(y * 5, 2),
     }
 
 
@@ -65,17 +65,17 @@ def calculate_point_curve(param: schemas.CalculateCurveParam, db: Session = Depe
     # 假定走板通过id的塔位，那么可以求的每基塔位的牵引力
     lst_s = json.loads(lst_sis[param.index])
     # 那么就可以计算所有点坐标的集合
-    length = len(bets)
+    db.query(models.PointCurve).delete()
     for index_bet, bet in enumerate(bets):
-        if index_bet <= param.index:
+        if index_bet < param.index:
             w = param.w_d
-            # lst_points.append(cal_points_bet_single(db, w, lst_s, index_bet))
         else:
             w = param.w_p
-            # lst_points.append(cal_points_bet_single(db, w, lst_s, index_bet))
         xs, ys = cal_points_bet_single(db, w, lst_s, index_bet)
+
         point_curve = {
             "w": w,
+            "index": param.index,
             "xs": json.dumps(xs),
             "ys": json.dumps(ys),
         }
@@ -102,9 +102,9 @@ def cal_points_bet_single(db, w, powers, index):
     for i in range(50):
         x = bt_span / 49 * i
         point_x, point_y = getCurveXY(w, x, bt_span, lei_span, altitude, hi, angle)
-        p_x, p_y = getXY(point_x, point_y)
-        lst_x.append(p_x)
-        lst_y.append(p_y)
+        xy = getXY(point_x, point_y)
+        lst_x.append(xy["x"])
+        lst_y.append(xy["y"])
 
     return lst_x, lst_y
 
@@ -119,3 +119,9 @@ def get_point_towers(skip: int = 0, limit: int = 100, db: Session = Depends(get_
 @app.get("/get_point_across/", response_model=List[schemas.PointAcross])
 def get_point_across(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_point_across(db=db, skip=skip, limit=limit)
+
+
+# 获取曲线点坐标集合
+@app.get("/get_point_curve/", response_model=List[schemas.PointCurve])
+def get_point_curve(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_point_curve(db=db, skip=skip, limit=limit)

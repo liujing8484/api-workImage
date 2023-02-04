@@ -30,8 +30,9 @@ class PointCurve(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     bet_id = Column(Integer, ForeignKey("bets.id"))
+    index = Column(Integer, nullable=False, comment='走板通过的塔位')
     w = Column(Float, nullable=False, comment='引绳自重')
-    xs = Column(String(255))  # x坐标的集合
-    ys = Column(String(255))   # y坐标的集合
+    xs = Column(String(500))  # x坐标的集合
+    ys = Column(String(500))  # y坐标的集合
 
     bet = relationship("Bet")
