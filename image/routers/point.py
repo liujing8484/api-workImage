@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from image import models, crud, schemas
 from ..database import SessionLocal
 from ..utils import *
+from functools import wraps
 
 app = APIRouter()
 
@@ -19,7 +20,23 @@ def get_db():
         db.close()
 
 
+min_y, max_y, max_x = 1000000, 0, 0
+
+
+def getMinAndMax(func):
+    @wraps(func)
+    def inner(*args, **kwargs):
+        global min_y, max_y, max_x
+        res = func(*args, **kwargs)
+        min_y = min(min_y, res['y'])
+        max_y = max(max_y, res['y'])
+        max_x = max(max_x, res['x'])
+        return res
+    return inner
+
+
 # 所有的点都会通过这个方法
+@getMinAndMax
 def getXY(x, y):
     return {
         "x": round(x / 2, 2),
@@ -125,3 +142,13 @@ def get_point_across(skip: int = 0, limit: int = 100, db: Session = Depends(get_
 @app.get("/get_point_curve/", response_model=List[schemas.PointCurve])
 def get_point_curve(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_point_curve(db=db, skip=skip, limit=limit)
+
+
+# 获取x，y的最大值和最小值
+@app.get("/get_min_max_xy/", response_model=schemas.MaxAndMinXY)
+def get_min_max_xy():
+    return {
+        "minY": min_y,
+        "maxY": max_y,
+        "maxX": max_x,
+    }
