@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:password@127.0.0.1:3306/image"
 
 # echo=True表示引擎将用repr()函数记录所有语句及其参数列表到日志
-engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
+engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=False)
 
 # SQLAlchemy中，CRUD是通过会话进行管理的，所以需要先创建会话，
 # 每一个SessionLocal实例就是一个数据库session
