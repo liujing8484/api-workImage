@@ -42,7 +42,7 @@ class Across(Base):
     acrossName = Column(String(50), comment='跨越点')
     acrossX = Column(Float, nullable=False, comment='X')
     acrossY = Column(Float, nullable=False, comment='Y')
-    controlHight = Column(Float, nullable=False, comment='控制距离')
+    controlHeight = Column(Float, nullable=False, comment='控制距离')
     remark = Column(String(50), comment='备注')
 
     bet = relationship("Bet", back_populates="across")

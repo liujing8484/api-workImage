@@ -40,7 +40,7 @@ class AcrossBase(BaseModel):
     acrossName: str
     acrossX: float
     acrossY: float
-    controlHight: float
+    controlHeight: float
     remark: str
 
 
