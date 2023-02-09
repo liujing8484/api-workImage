@@ -148,7 +148,6 @@ def get_point_curve(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
 # 获取x，y的最大值和最小值
 @app.get("/get_size/", response_model=schemas.Size)
 def get_size():
-    print(min_y)
     minY = math.floor(min_y / 5 / 10 - 1) * 10 * 5
     if max_x == 0:
         return {
