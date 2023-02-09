@@ -67,7 +67,7 @@ def create_models_from_excel(file: bytes = File(...), db: Session = Depends(get_
             "acrossName": row.acrossName,
             "acrossX": row.acrossX,
             "acrossY": row.acrossY,
-            "controlHight": row.controlHight,
+            "controlHeight": row.controlHeight,
             "remark": row.remark,
         }
         crud.db_create_across(db=db, across=schemas.CreateAcross(**across), bet_id=bet.id)

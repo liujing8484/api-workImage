@@ -32,6 +32,7 @@ def getMinAndMax(func):
         max_y = max(max_y, res['y'])
         max_x = max(max_x, res['x'])
         return res
+
     return inner
 
 
@@ -145,10 +146,19 @@ def get_point_curve(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
 
 
 # 获取x，y的最大值和最小值
-@app.get("/get_min_max_xy/", response_model=schemas.MaxAndMinXY)
-def get_min_max_xy():
-    return {
-        "minY": min_y,
-        "maxY": max_y,
-        "maxX": max_x,
-    }
+@app.get("/get_size/", response_model=schemas.Size)
+def get_size():
+    print(min_y)
+    minY = math.floor(min_y / 5 / 10 - 1) * 10 * 5
+    if max_x == 0:
+        return {
+            "width": 0,
+            "height": 0,
+            "minY": 0
+        }
+    else:
+        return {
+            "width": max_x,
+            "height": max_y - minY,
+            "minY": minY
+        }

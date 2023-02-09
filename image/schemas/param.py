@@ -18,7 +18,7 @@ class CalculateCurveParam(BaseModel):
     index: int = 0  # 走板通过的塔位的index
 
 
-class MaxAndMinXY(BaseModel):
+class Size(BaseModel):
+    width: float
+    height: float
     minY: float
-    maxY: float
-    maxX: float

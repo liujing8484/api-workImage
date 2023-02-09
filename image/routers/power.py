@@ -69,7 +69,7 @@ def calculate_power(param: schemas.CalculatePowerParam, db: Session = Depends(ge
     lst_across = db.query(models.Across).all()
     w = param.w_d  # 导引绳的自重
     for across in lst_across:
-        x, y = across.acrossX, across.acrossY + across.controlHight
+        x, y = across.acrossX, across.acrossY + across.controlHeight
         bet = across.bet
         tName, _ = bet.btName.split("--")
         tower = crud.get_tower_by_name(db, tName)
