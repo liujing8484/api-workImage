@@ -36,3 +36,11 @@ class PointCurve(Base):
     ys = Column(String(500))  # y坐标的集合
 
     bet = relationship("Bet")
+
+
+class SizeData(Base):
+    __tablename__ = "size_date"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    name = Column(String(50))
+    num = Column(Float, nullable=False, comment='值')

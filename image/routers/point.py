@@ -45,6 +45,17 @@ def getXY(x, y):
     }
 
 
+def db_max_min_xy(db):
+    # 将maxX，maxY，minY进行存储
+    db.query(models.SizeData).delete()
+    minY = {"name": "min_y", 'num': min_y}
+    maxY = {"name": "max_y", 'num': max_y}
+    maxX = {"name": "max_x", 'num': max_x}
+    crud.db_create_min_max_xy(db, schemas.SizeDateBase(**minY))
+    crud.db_create_min_max_xy(db, schemas.SizeDateBase(**maxY))
+    crud.db_create_min_max_xy(db, schemas.SizeDateBase(**maxX))
+
+
 @app.get("/calculate_point/")
 def calculate_point(db: Session = Depends(get_db)):
     towers = db.query(models.Tower).all()
@@ -71,7 +82,8 @@ def calculate_point(db: Session = Depends(get_db)):
         point_across = getXY(x, y)
         crud.db_create_point_across(db, schemas.PointAcrossBase(**point_across), across_id=across.id)
 
-    # 计算curve的坐标
+    # 将maxX，maxY，minY进行存储
+    db_max_min_xy(db)
 
     return {"message": "坐标计算成功"}
 
@@ -98,6 +110,9 @@ def calculate_point_curve(param: schemas.CalculateCurveParam, db: Session = Depe
             "ys": json.dumps(ys),
         }
         crud.db_create_point_curve(db, schemas.PointCurveBase(**point_curve), bet_id=bet.id)
+
+    # 将maxX，maxY，minY进行存储
+    db_max_min_xy(db)
     return {"message": "坐标计算成功"}
 
 
@@ -139,6 +154,14 @@ def get_point_across(skip: int = 0, limit: int = 100, db: Session = Depends(get_
     return crud.get_point_across(db=db, skip=skip, limit=limit)
 
 
+# 获取第一控制点和第二控制点坐标集合
+@app.get("/get_point_across_max/", response_model=List[schemas.PointAcross])
+def get_point_across_max(db: Session = Depends(get_db)):
+    lst_power_bet = crud.get_power_across(db, skip=0, limit=100)
+    lst_power_bet.sort(key=lambda t: t.ti, reverse=True)
+    return [crud.get_point_across_by_across(db, across=p.across).first() for p in lst_power_bet[0:2]]
+
+
 # 获取曲线点坐标集合
 @app.get("/get_point_curve/", response_model=List[schemas.PointCurve])
 def get_point_curve(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -147,17 +170,15 @@ def get_point_curve(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
 
 # 获取x，y的最大值和最小值
 @app.get("/get_size/", response_model=schemas.Size)
-def get_size():
-    minY = math.floor(min_y / 5 / 10 - 1) * 10 * 5
-    if max_x == 0:
-        return {
-            "width": 0,
-            "height": 0,
-            "minY": 0
-        }
-    else:
-        return {
-            "width": max_x,
-            "height": max_y - minY,
-            "minY": minY
-        }
+def get_size(db: Session = Depends(get_db)):
+    miY = crud.get_min_max_xy(db, name='min_y').num
+    maY = crud.get_min_max_xy(db, name='max_y').num
+    maX = crud.get_min_max_xy(db, name='max_x').num
+
+    minY = math.floor(miY / 5 / 10 - 1) * 10 * 5
+    return {
+        "width": maX,
+        "height": maY - minY,
+        "minY": minY
+    }
+

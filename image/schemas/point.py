@@ -41,3 +41,15 @@ class PointCurve(PointCurveBase):
 
     class Config:
         orm_mode = True
+
+
+class SizeDateBase(BaseModel):
+    name: str
+    num: float
+
+
+class SizeDate(SizeDateBase):
+    id: int
+
+    class Config:
+        orm_mode = True
